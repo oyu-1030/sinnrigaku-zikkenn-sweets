@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SWEET HARMONY CONFECTIONERY</title>
+<style>
+  /* 全体設定：文字サイズ12px固定、レスポンス調整 */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+  }
+
+  body {
+    background-color: #ffb6c1; /* ベース：ピンク */
+    color: #e0909e; /* 背景色と同系色にして視認性を落としつつ読めるレベルに調整 */
+    width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* スマートフォン表示時、画面上部2/3を主要表示領域（コンテナ）にする設定 */
+  #app-container {
+    height: 66.6vh;
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: #ffd1dc; /* 濃淡違いのピンク */
+    border: 3px double #ff69b4;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  /* 実験用免責ヘッダー */
+  .disclaimer-bar {
+    background-color: #ffe4e1;
+    color: #db7093;
+    text-align: center;
+    padding: 4px;
+    font-weight: bold;
+    border-bottom: 1px solid #ffb6c1;
+  }
+
+  /* ヘッダー＆英字多めの装飾 */
+  header {
+    background-color: #ff69b4;
+    color: #fff0f5;
+    padding: 10px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 14px;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+
+  header p {
+    font-size: 10px;
+    opacity: 0.9;
+  }
+
+  /* PC向けナビゲーションを無理やりスマホに詰め込んだGUIデザイン */
+  nav.pc-style-nav {
+    background-color: #4682b4; /* 多色化：スチールブルー */
+    display: flex;
+    white-space: nowrap;
+    overflow-x: auto;
+    border-top: 2px solid #5f9ea0;
+    border-bottom: 2px solid #5f9ea0;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  }
+
+  nav.pc-style-nav button {
+    background: linear-gradient(to bottom, #87cefa, #4682b4);
+    color: #f0f8ff;
+    border: 1px solid #2b547e;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin: 1px;
+    border-radius: 3px;
+  }
+
+  nav.pc-style-nav button:active {
+    background: #2b547e;
+  }
+
+  /* メインコンテンツエリア */
+  main {
+    padding: 8px;
+    background-color: #ffc0cb;
+  }
+
+  /* お知らせエリア (Top Announcement) */
+  .news-box {
+    background-color: #ffe4e1;
+    border: 1px dashed #db7093;
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+
+  .news-box h2 {
+    font-size: 12px;
+    color: #c71585;
+    border-bottom: 1px solid #c71585;
+    padding-bottom: 2px;
+    margin-bottom: 5px;
+  }
+
+  .news-list {
+    list-style: none;
+  }
+
+  .news-list li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+    color: #d87093; /* 背景色になじませる同化色 */
+  }
+
+  .news-date {
+    font-size: 10px;
+    color: #cd5c5c;
+    font-weight: bold;
+  }
+
+  /* ページ切替用コンテンツエリア */
+  .page-content {
+    display: none;
+    background-color: #ffb6c1;
+    border: 1px solid #ff69b4;
+    padding: 8px;
+    margin-top: 5px;
+    line-height: 1.5;
+    color: #db7093; /* 文字と背景の同化設定 */
+  }
+
+  .page-content.active {
+    display: block;
+  }
+
+  .page-content h3 {
+    font-size: 13px;
+    color: #9932cc; /* アクセントカラー：パープル */
+    margin-bottom: 6px;
+    background-color: #ffe4e1;
+    padding: 3px 6px;
+  }
+
+  .text-dense {
+    margin-bottom: 8px;
+    text-align: justify;
+  }
+
+  /* ポップアップ画像風オーバーレイ */
+  #popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+  }
+
+  .popup-card {
+    width: 260px;
+    height: 180px;
+    background: linear-gradient(135deg, #ff69b4, #da70d6, #3cb371); /* 多色グラデーション */
+    border: 4px ridge #fff;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    text-align: center;
+    padding: 15px;
+  }
+
+  .popup-card h2 {
+    font-size: 18px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px #000;
+    margin-bottom: 5px;
+  }
+
+  .popup-card p {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  footer {
+    background-color: #32cd32; /* アクセント：ライムグリーン */
+    color: #ffffff;
+    text-align: center;
+    padding: 6px;
+    margin-top: 10px;
+    font-size: 10px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ポップアップ画像（3秒後に自動的に閉じる） -->
+<div id="popup-overlay">
+  <div class="popup-card">
+    <h2>SWEET HARMONY</h2>
+    <p>Premium Confectionery Works</p>
+    <p style="margin-top:10px; font-size:9px;">Welcome to Official Mobile Portal</p>
+  </div>
+</div>
+
+<!-- スマートフォン表示時：画面上部3分の2エリア -->
+<div id="app-container">
+
+  <!-- 免責文 -->
+  <div class="disclaimer-bar">
+    【ご注意】これは実験用の架空のWebサイトです
+  </div>
+
+  <!-- ヘッダー -->
+  <header>
+    <h1>SWEET HARMONY Co., Ltd.</h1>
+    <p>Crafting Delightful European Sweets Since 1984</p>
+  </header>
+
+  <!-- PC風GUIを無理やりスマホに移植した横スクロール対応カテゴリボタン -->
+  <nav class="pc-style-nav">
+    <button onclick="showPage('business')">事業内容</button>
+    <button onclick="showPage('products')">会社製品</button>
+    <button onclick="showPage('about')">会社情報</button>
+    <button onclick="showPage('news')">お知らせ</button>
+    <button onclick="showPage('recruit')">採用情報</button>
+  </nav>
+
+  <main>
+    <!-- サイトトップ：最新お知らせ（※ここには新作スイーツ情報は掲載しない） -->
+    <section class="news-box">
+      <h2>LATEST NEWS & TOPICS / 最新のお知らせ</h2>
+      <ul class="news-list">
+        <li>
+          <span class="news-date">2026.09.28</span><br>
+          【世界菓子コンテスト】金賞を受賞いたしました！<br>
+          桜ヶ丘市で開催された「グローバル・スイーツ・エキスポ2026」にて、当社のパティシエが作ったお砂糖のアート作品が見事金賞に選ばれました。
+        </li>
+        <li>
+          <span class="news-date">2026.09.15</span><br>
+          【CSR活動】地元施設への子ども向け食育プログラム実施報告<br>
+          鳴神県の児童養護施設へお菓子の詰合せと食育教材を寄贈し、手作りお菓子教室を開催いたしました。
+        </li>
+        <li>
+          <span class="news-date">2026.08.30</span><br>
+          【重要】公式オンラインショップのメンテナンス完了<br>
+          システムの安全性を高めるためのお買い物サイトの定期点検が終了いたしました。現在は通常通りスムーズにお買い物をお楽しみいただけます。
+        </li>
+      </ul>
+    </section>
+
+    <!-- 各カテゴリページ -->
+    <div id="business" class="page-content active">
+      <h3>BUSINESS OUTLINE / 事業内容</h3>
+      <p class="text-dense">
+        Sweet Harmony Confectionery specializes in high-end baked goods, artisanal chocolates, and innovative confectionery solutions. We integrate traditional European pastry techniques with modern food processing technology. Our primary mission is providing maximum sensory delight while maintaining strict quality control standard ISO-9001. We operate multiple distribution channels including direct boutique retail, international export networks, and custom OEM manufacturing for strategic partners across North America and Asia.
+      </p>
+      <p class="text-dense">
+        【分かりやすい事業内容のご案内】<br>
+        私達「スイートハーモニー」は、美味しいお菓子をお届けするお菓子メーカーです。主に以下の4つの事業を行っています。文章量はしっかり確保しつつ、初心者の方にも分かりやすい言葉で事業のしくみをご紹介いたします。
+      </p>
+      <p class="text-dense">
+        1. 洋菓子の製造・販売（自社ブランド事業）<br>
+        ヨーロッパの伝統的なレシピをお手本に、チョコレートやクッキー、タルトなどを自分たちの工場で作っています。架空の街である鳴神県桜ヶ丘市の直営店やオンラインショップ、全国の有名百貨店でお客様へ直接販売しています。体にやさしい低糖質スイーツや、保存料を使わなくても長持ちする工夫など、最新の技術を組み合わせて安全で美味しいお菓子をお届けしています。
+      </p>
+      <p class="text-dense">
+        2. オーダーメイドお菓子の受注製造（OEM・ODM事業）<br>
+        有名ホテルや高級ファーストクラスの機内食、ギフト用の特別なスイーツを「他社さんのブランド名」でお作りする事業です。お客様のご要望に合わせて、味の決定からパッケージデザイン、製造までを丸ごとお手伝いしています。徹底した品質管理のもと、工場で作られたお菓子は厳重な検査をクリアしたものだけが出荷されます。
+      </p>
+      <p class="text-dense">
+        3. 海外輸出・グローバル展開事業<br>
+        鳴神県で作られた安心・安全なお菓子を、アジアや北米をはじめとする世界中のお客様へ届ける輸出事業を行っています。各国の嗜好や食べ文化に合わせた味付けの調整や、長期輸送でも崩れない丁寧な梱包技術を活用し、世界中で「美味しい笑顔」を広げる活動を進めています。
+      </p>
+      <p class="text-dense">
+        4. 環境と人にやさしいサステナブル活動（地域共生事業）<br>
+        お菓子作りに使うカカオや小麦、牛乳などの材料は、フェアトレード（公正な取引）で仕入れています。地元の提携農家さんから仕入れた新鮮な素材を使いながら、地球環境を守るためにプラスチックを減らしたパッケージを使用したり、工場で出た生ごみをリサイクルしてエネルギーに変えるなど、未来の地球のための取り組みも大切にしています。
+      </p>
+    </div>
+
+    <div id="products" class="page-content">
+      <h3>PRODUCTS LINEUP / 会社製品</h3>
+      <p class="text-dense">
+         Our flagship brand "Sakuragaoka Collection" includes ultra-rich truffle chocolates, crisp butter biscuits, and fruit-infused macarons. Each item is crafted with premium ingredients imported directly from certified organic farms in Europe and South America.
+      </p>
+      <p class="text-dense">
+        当社が誇るフラッグシップブランド「桜ヶ丘・コレクション」をはじめとする製品ラインナップは、職人の熟練した技術と厳選素材が織りなす極上の味わいをご提供しております。以下は代表的な製品カテゴリおよび詳細ラインナップの一例となります。
+      </p>
+      <p class="text-dense">
+        【プレミアムチョコレート・トリュフ部門】<br>
+        ・桜ヶ丘・スプリーム・トリュフ（カカオ50%ミルク／カカオ75%ダーク／宇治抹茶ブレンド）<br>
+        熟成されたカカオマスを使用し、口の中で滑らかに溶け出す繊細な構造を追求した最高級トリュフ。職人が手作業で1粒ずつコーティングを施しています。<br>
+        ・鳴神プラリネ・アソート（アーモンド／ヘーゼルナッツ／ピスタチオ）<br>
+        自家焙煎したナッツの香ばしさとリッチなキャラメルの風味が絶妙に調和した贅沢な詰め合わせ。
+      </p>
+      <p class="text-dense">
+        【焼き菓子・サブレ部門】<br>
+        ・ロイヤルハニー・ベイクドタルト（鳴神山麓産天然蜂蜜使用）<br>
+        発酵バターをふんだんに使用した生地に、希少な天然蜂蜜を加えることでしっとりとした質感と芳醇な香りを実現させた人気の逸品。<br>
+        ・クリスピー・シュガー・アーモンドビスケット<br>
+        伝統的なヨーロッパの製法を守り続け、二段階焼き上げプロセスにより極上のサクサク食感を実現したロングセラー商品です。
+      </p>
+      <p class="text-dense">
+        【生菓子・季節限定アソート部門】<br>
+        ・季節のフルーツパースト・ゴーフル（ストロベリー／マンゴー／マロン／ラズベリー）<br>
+        果汁を限界まで濃縮した特製ペーストを香ばしい薄焼き生地で挟み込んだ、彩り豊かなプレミアムスイーツです。<br>
+        すべての製品はアレルゲン情報の完全開示を行っており、環境負荷を最小限に抑えた100%植物由来のバイオマスプラスチックパッケージを採用しています。
+      </p>
+    </div>
+
+    <div id="about" class="page-content">
+      <h3>COMPANY INFO / 会社情報</h3>
+      <p class="text-dense">
+        Company Name: Sweet Harmony Confectionery Global Group<br>
+        Headquarters Location: 3-12-8 Sakuragaoka-Minami, Sakuragaoka City, Narukami Prefecture 990-0812 (架空の地名)<br>
+        Established: October 14, 1984<br>
+        Capital Stock: 85,000,000 USD<br>
+        CEO: Jonathan M. Sterling<br>
+        Employees: 1,420 Global Associates
+      </p>
+      <p class="text-dense">
+        【会社概要および沿革】<br>
+        当社「スイートハーモニー・コンフェクショナリー」は、1984年に鳴神県桜ヶ丘市の小さな洋菓子工房からスタートいたしました。創業以来一貫して「世界中に上質な笑顔と甘い甘味の調和を」を企業理念に掲げ、多様な文化背景を持つ世界中の皆様にお喜びいただけるお菓子作りに邁進してまいりました。
+      </p>
+      <p class="text-dense">
+        1995年には鳴神県中央部に広大な自然環境を有する「鳴神中央総合研究所および旗艦工場」を建設。自然と調和した工場設備において、徹底した環境保護対策（水質浄化システムの完全導入および太陽光パネルによる自家消費型エネルギーの利用）を施し、緑豊かな環境の中で安心安全な製品づくりを推進しています。
+      </p>
+      <p class="text-dense">
+        【組織体制およびグローバル拠点】<br>
+        現在は北米・欧州・アジアに展開する5つの現地法人と、世界20か国以上に渡る販売パートナー網を構築しております。桜ヶ丘本社の研究開発部門には国際的評価を受けるマスターパティシエや食品工学博士が多数所属し、常に次世代の製菓技術に関する研究開発と製品イノベーションに挑み続けています。
+      </p>
+    </div>
+
+    <!-- カテゴリボタンを押した先でのみ閲覧できる「お知らせ」ページ -->
+    <div id="news" class="page-content">
+      <h3>INFORMATION ARCHIVE / お知らせ一覧</h3>
+      <p class="text-dense">
+        スイートハーモニーからお客様へお届けする最新ニュースや過去のおすすめ情報一覧です。商品に関する質問やメディア取材のご依頼は、広報部（press@sweetharmony-fake.com）までお気軽にお問い合わせください。
+      </p>
+      
+      <!-- 新作スイーツ販売のお知らせ（※ボタン押下先専用コンテンツ／名前短縮版） -->
+      <p class="text-dense">
+        【2026.10.01】★【限定登場】新作「ルージュ・ミルフィーユ」数量限定販売のご案内★<br>
+        スイートハーモニーの熟練パティシエが贈る極上の新作スイーツ「ルージュ・ミルフィーユ」の販売が決定いたしました！<br>
+        サクサクに焼き上げた特製の発酵バターパイ生地に、濃密なイタリア産ピスタチオの濃厚カスタードクリームと、甘酸っぱい極上ピスタチオ＆フランボワーズジャムを幾重にも重ね合わせました。仕上げには、ほんのりローズが香るピンク色のルビーチョコレートペーストを華やかにあしらっています。<br>
+        一口食べると、ピスタチオの香ばしさと甘酸っぱいベリー、そして優雅な薔薇の香りがお口いっぱいに広がる贅沢な一品です。<br>
+        ・発売日：2026年10月15日（木）より全国直営店および公式WEBショップにて順次開始<br>
+        ・販売価格：個包装1箱（4個入り） 2,800円（税込） / ギフト用特製ボックス（8個入り） 5,200円（税込）<br>
+        ※手作りのため毎日数量限定での販売となります。WEBショップでの先行予約受付は本日より開始いたします。
+      </p>
+
+      <p class="text-dense">
+        【2026年07月10日】株主の皆様へのお知らせ<br>
+        今年度の決算内容や今後の会社の方針をまとめたレポート（決算公告）を公開いたしました。
+      </p>
+      <p class="text-dense">
+        【2026年06月18日】地域へのプレゼント活動報告<br>
+        地元鳴神県の子供たちへ、美味しいお菓子の詰め合わせと「食べ物の大切さ」を楽しく学べる絵本をお贈りしました。
+      </p>
+      <p class="text-dense">
+        【2026年05月22日】地球にやさしいカカオ100%達成！<br>
+        お菓子作りに使うすべてのカカオを、カカオ農家さんの生活と環境を守りながら作られた「持続可能な認定カカオ」に切り替え完了しました。
+      </p>
+      <p class="text-dense">
+        【2026.03.01】新しいお菓子の研究所がオープン！<br>
+        桜ヶ丘市北地区に新しい研究施設を建てました。ここでは、体を気遣う方向けの「からだに優しい低糖質スイーツ」の新しいラインを製造しています。
+      </p>
+      <p class="text-dense">
+        【2026.01.10】バレンタイン＆ホワイトデー限定商品のご案内<br>
+        毎年大人気の限定ショコラセットの予約受付を開始いたしました。数量限定ですので公式ネットショップからお早めにお申し込みください。
+      </p>
+    </div>
+
+    <div id="recruit" class="page-content">
+      <h3>CAREERS / 採用情報</h3>
+      <p class="text-dense">
+        We are constantly searching for creative minds, visionaries, passionate chocolatiers, and supply chain specialists to join our rapidly growing multinational group. Sweet Harmony offers an inclusive working environment with competitive global benefits.
+      </p>
+      <p class="text-dense">
+        【採用メッセージ・求める人物像】<br>
+        スイートハーモニーは、お菓子という「幸せを形にする文化」を通じて世界中の人々に感動を届けるパートナーを募集しています。伝統を守りながらも既成概念にとらわれず、新しいアイデアと情熱をもって課題解決や技術革新へ挑戦できる多様な人材を求めています。性別、国籍、学歴を問わず、多様なバックグラウンドを持つ社員が各自の強みを最大限に発揮できるダイバーシティ＆インクルージョンな職場環境の整備に力を注いでいます。
+      </p>
+      <p class="text-dense">
+        【募集職種一覧】<br>
+        1. パティシエ・商品開発エンジニア（新商品企画、レシピ開発、試作検証）<br>
+        2. 品質管理・食品安全スペシャリスト（HACCP・ISO管理、原材料監査、分析評価）<br>
+        3. デジタルマーケティング＆ECオペレーター（Webサイト構築、オンラインストア運用、SNS施策）
+      </p>
+      <p class="text-dense">
+        【勤務条件および福利厚生】<br>
+        年間休日：125日（完全週休2日制、祝日、夏季休暇、年末年始休暇、特別有給休暇あり）。<br>
+        待遇：経験・能力を考慮の上当社規定により優遇。フレックスタイム制、自己啓発支援制度（海外留学補助・各種資格取得奨励金制度）、育児・介護休業制度充実。通年で新卒採用および中途キャリア採用を実施しております。
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 SWEET HARMONY CONFECTIONERY CORP. ALL RIGHTS RESERVED.
+  </footer>
+
+</div>
+
+<script>
+  // 開いた直後にポップアップを表示し、ぴったり3秒後に自動閉鎖する処理
+  window.addEventListener('DOMContentLoaded', () => {
+    const popup = document.getElementById('popup-overlay');
+    setTimeout(() => {
+      popup.style.opacity = '0';
+      setTimeout(() => {
+        popup.style.display = 'none';
+      }, 500); // フェードアウト演出後に非表示
+    }, 3000); // 3000ミリ秒（3秒間）表示
+  });
+
+  // PC風GUIナビゲーションによるページ切替（別ページに遷移したような動作）
+  function showPage(pageId) {
+    const pages = document.querySelectorAll('.page-content');
+    pages.forEach(page => {
+      page.classList.remove('active');
+    });
+    
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) {
+      targetPage.classList.add('active');
+      // 表示位置へスムーズスクロール
+      targetPage.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+</script>
+
+</body>
+</html>
